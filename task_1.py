@@ -25,10 +25,28 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
         Dict з порядком друку та загальним часом
     """
     # Тут повинен бути ваш код
+    data = print_jobs.copy()
+    heap = []
+    total_volume = 0
+    total_tasks = 0
+    total_time = 0
+
+    
+    while len(data) > 0:
+        best_task = min(data, key=lambda x: (x["priority"], -x["print_time"]))
+        
+
+        heap.append(best_task['id'])
+        total_tasks+=1
+        total_volume+=best_task["volume"]
+        total_time+=best_task["print_time"]
+        data.remove(best_task)
+
+
 
     return {
-        "print_order": None,
-        "total_time": None
+        "print_order": heap,
+        "total_time": total_time
     }
 
 # Тестування
