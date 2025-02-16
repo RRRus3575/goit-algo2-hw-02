@@ -24,7 +24,7 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
     Returns:
         Dict з порядком друку та загальним часом
     """
-    # Тут повинен бути ваш код
+    
     data = print_jobs.copy()
     heap = []
     total_volume = 0
