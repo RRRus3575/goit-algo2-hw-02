@@ -11,14 +11,37 @@ def rod_cutting_memo(length: int, prices: List[int]) -> Dict:
     Returns:
         Dict з максимальним прибутком та списком розрізів
     """
-    
+
 		# Тут повинен бути ваш код
+    memo ={}
+
+    def dp(remaining_length: int) -> Dict:
+        if remaining_length == 0:
+            return {"max_profit": 0, "cuts": [], "number_of_cuts": 0}
+
+        if remaining_length in memo:
+            return memo[remaining_length]  # Используем кэшированное значение
+
+        max_profit = 0
+        best_cuts = []
     
-    return {
-        "max_profit": None,
-        "cuts": None,
-        "number_of_cuts": None
-    }
+   
+        for item in range(1, remaining_length + 1):
+            if item <= len(prices):
+                remaining = dp(remaining_length - item)
+
+                total_profit = prices[item - 1] + remaining["max_profit"]
+
+                if total_profit > max_profit:
+                    max_profit = total_profit
+                    best_cuts = [item] + remaining["cuts"]
+    
+        memo[remaining_length] = {"max_profit": max_profit, "cuts": best_cuts, "number_of_cuts": len(best_cuts)}
+        
+        return memo[remaining_length] 
+    
+    
+    return dp(length)
 
 def rod_cutting_table(length: int, prices: List[int]) -> Dict:
     """
@@ -33,11 +56,29 @@ def rod_cutting_table(length: int, prices: List[int]) -> Dict:
     """
     
     # Тут повинен бути ваш код
+    
+    dp=[0]*(length+1)
+    cuts = [[] for _ in range(length + 1)]
+    
+    for item in range(1, length+1):
+        max_profit = 0
+        best_cut = []
 
+        for cut in range(1, item+1):
+            if cut <= len(prices):
+                total_profit = prices[cut - 1] + dp[item - cut]
+                if total_profit > max_profit:
+                    max_profit = total_profit
+                    best_cut = [cut] + cuts[item - cut]
+                
+        dp[item] = max_profit
+        cuts[item] = best_cut 
+
+    
     return {
-        "max_profit": None,
-        "cuts": None,
-        "number_of_cuts": None
+        "max_profit": dp[length],  
+        "cuts": cuts[length],  
+        "number_of_cuts": len(cuts[length])  
     }
 
 def run_tests():
