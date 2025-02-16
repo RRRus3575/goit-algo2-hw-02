@@ -24,26 +24,39 @@ def optimize_printing(print_jobs: List[Dict], constraints: Dict) -> Dict:
     Returns:
         Dict з порядком друку та загальним часом
     """
-    
+
     data = print_jobs.copy()
     heap = []
-    total_volume = 0
-    total_tasks = 0
     total_time = 0
 
+    current_batch = []
+    current_volume = 0
+    max_print_time = 0 
+    current_count = 0
+
+    data.sort(key=lambda x: (x["priority"], -x["print_time"]))
+
+    for task in data:
+        if (current_volume + task["volume"] > constraints["max_volume"] or current_count + 1 > constraints["max_items"]):
+            total_time += max_print_time 
+            current_batch = []
+            current_volume = 0
+            current_count = 0
+            max_print_time = 0
+
+
+        current_batch.append(task["id"])
+        current_volume += task["volume"]
+        current_count += 1
+        max_print_time = max(max_print_time, task["print_time"])
+        heap.append(task["id"])
+
+
+    if current_batch:
+        total_time += max_print_time    
     
-    while len(data) > 0:
-        best_task = min(data, key=lambda x: (x["priority"], -x["print_time"]))
-        
-
-        heap.append(best_task['id'])
-        total_tasks+=1
-        total_volume+=best_task["volume"]
-        total_time+=best_task["print_time"]
-        data.remove(best_task)
-
-
-
+    
+   
     return {
         "print_order": heap,
         "total_time": total_time
